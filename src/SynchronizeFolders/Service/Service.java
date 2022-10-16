@@ -22,32 +22,32 @@ public class Service {
 		serviceUpdate.work();
 	}
 	private void firstStart() throws Exception {
-		String sourceFolder;
-		String syncFolder;
+		String sourcePath;
+		String syncToPath;
 		int timeSleep;
 
 		Scanner scan = new Scanner(System.in);
 
 		System.out.print("Первый запуск\nВведите путь к источнику синхронизации:");
-		sourceFolder = formatPath(scan.nextLine());
-		Service.checkFolder(sourceFolder);
+		sourcePath = formatPath(scan.nextLine());
+		Service.checkFolder(sourcePath);
 
 		System.out.print("Введите путь к конечной папке:");
-		syncFolder = scan.nextLine().replace("\n", "");
-		syncFolder = formatPath(syncFolder);
+		syncToPath = scan.nextLine().replace("\n", "");
+		syncToPath = formatPath(syncToPath);
 
-		String sourceFolderName = new File(sourceFolder).getName();
-		// String syncFolderName = new File(syncFolder).getName();
-		Service.checkFolder(syncFolder.replace(sourceFolderName, ""));
+		String sourceFolderName = new File(sourcePath).getName();
+		// String syncFolderName = new File(syncToPath).getName();
+		Service.checkFolder(syncToPath.replace(sourceFolderName, ""));
 	
-		Path of = Path.of(syncFolder);
+		Path of = Path.of(syncToPath);
 		if (!Files.exists(of)) {
 			Files.createDirectory(of);
 		}
 
-		if (sourceFolder.equalsIgnoreCase(syncFolder)) {
+		if (sourcePath.equalsIgnoreCase(syncToPath)) {
 			scan.close();
-			throw new Exception("Исходная папка не может быть папкой для синхронизации");
+			throw new Exception("Папка-источник должна отличаться от папки для синхронизации");
 		}
 
 		System.out.print("Введите время между синхронизацией(1 - 3600 секунд):");
@@ -55,8 +55,8 @@ public class Service {
 
 		scan.close();
 
-		Repo.setParam("sourceFolder", sourceFolder);
-		Repo.setParam("syncFolder", syncFolder);
+		Repo.setParam("sourcePath", sourcePath);
+		Repo.setParam("syncToPath", syncToPath);
 		Repo.setParam("timeSleep", String.valueOf(timeSleep));
 
 		Repo.saveConfig();
