@@ -11,24 +11,42 @@ import SynchronizeFolders.Repo;
 
 
 public class ServiceUpdate {
-	private String sourceFolder = "";
-	private String syncFolder = "";
+	private String sourcePath = "";
+	private String syncToPath = "";
+
+	public String getSourcePath() {
+		return sourcePath;
+	}
+	public String getSyncToPath() {
+		return syncToPath;
+	}
+	public void setSourcePath(String str) {
+		sourcePath = str;
+	}
+	public void setSyncToPath(String str) {
+		syncToPath = str;
+	}
+
 	public void work() {
-		sourceFolder = Repo.getParam("sourceFolder");
-		syncFolder = Repo.getParam("syncFolder");
+		setSourcePath(Repo.getParam("sourcePath"));
+		setSyncToPath(Repo.getParam("syncToPath"));
+
 		int timeSleep = Integer.parseInt(Repo.getParam("timeSleep")) * 1000;
 
 		while (true) {
 			try {
-				File[] filesSource = new File(sourceFolder).listFiles();
-				File[] filesSynced = new File(syncFolder).listFiles();
+				File[] filesSource = new File(getSourcePath()).listFiles();
+				File[] filesSynced = new File(getSyncToPath()).listFiles();
 
-				if (filesSource != null && filesSynced != null && filesSource.length > 0) {
-					deleteOldFiles(filesSynced);
-					baseHandler(filesSource);
-				} else {
-					System.err.println("Какая-то из папок недоступна или исходная папка пуста");
+				if (filesSource == null) {
+					System.err.println("Папка-источник недоступна/не существует");
 					Thread.sleep(7000);
+				} else if (filesSynced == null) {
+					System.err.println("Папка-наследник недоступна/не существует");
+					Thread.sleep(7000);
+				} else {
+					deleteOldFiles(filesSynced, "");
+					baseHandler(filesSource, "");
 				}
 
 				Thread.sleep(timeSleep);
@@ -39,23 +57,21 @@ public class ServiceUpdate {
 		}
 	}
 
-	private void baseHandler(File [] files) throws IOException {
-		ArrayList<File> sync = new ArrayList<>();
-		String newPath = "";
+	private void baseHandler(File [] filesList, String currentPath) throws IOException {
+		ArrayList<File> toSync = new ArrayList<>();
+		String syncToPath = getSyncToPath();
 
-		for (File file : files) {
+		syncToPath += currentPath;
+
+		for (File file : filesList) {
 			if (! file.canRead()) {
 				System.out.println("Невозможно прочитать файл " + file.getPath() + " | " + file.getName());
 				continue;
 			}
 
-			if (newPath.equals("")) {
-				newPath = file.getPath().replace(sourceFolder, syncFolder);
-				newPath = chetoToPath(newPath, file.getName());
-			}
-
 			if (file.isDirectory()) {
-				String newDir = addNameToPath(newPath, file.getName());
+				String directoryName = file.getName();
+				String newDir = syncToPath + directoryName + File.separator;
 				File dirSync = new File(newDir);
 
 				if (!dirSync.exists()) {
@@ -68,77 +84,60 @@ public class ServiceUpdate {
 					ServiceLogging.log("Создан каталог: \"" + newDir + "\"");
 				}
 
-				File [] nextFiles = file.listFiles();
-
-				if (nextFiles != null && nextFiles.length > 0) {
-					baseHandler(nextFiles);
+				File [] filesInDir = file.listFiles();
+				if (filesInDir != null && filesInDir.length > 0) {
+					baseHandler(filesInDir, currentPath + directoryName + File.separator);
 				}
-				continue;
-			}
-
-			File fileSync = new File(newPath + File.separator + file.getName());
-			if (!fileSync.exists()) {
-				sync.add(file);
+			} else {
+				File fileSync = new File(syncToPath + file.getName());
+				if (!fileSync.exists()) {
+					toSync.add(file);
+				}
 			}
 		}
 
-		if (sync.size() > 0) {
+		if (toSync.size() > 0) {
 			try {
-				copyFiles(sync, newPath);
+				copyFiles(toSync, syncToPath);
 			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}
 	}
-	private void deleteOldFiles(File [] filesSynced) throws IOException, InterruptedException {
-		String sourcePath = "";
+	private void deleteOldFiles(File [] filesSynced, String currentPath) throws IOException, InterruptedException {
+		String sourcePath = getSourcePath();
+		sourcePath += currentPath;
 
 		for (File file : filesSynced) {
-			if (sourcePath.equals("")) {
-				sourcePath = file.getPath().replace(syncFolder, sourceFolder);
-				sourcePath = chetoToPath(sourcePath, file.getName());
-			}
-
 			BasicFileAttributes basicFA = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
 			if (basicFA.isDirectory()) {
-				String newDir = addNameToPath(sourcePath, file.getName());
+				String directoryName = file.getName();
+				String pathSourceDir = sourcePath + directoryName;
 
-				File [] nextFiles = file.listFiles();
-				if (nextFiles != null && nextFiles.length > 0) {
-					deleteOldFiles(nextFiles);
+				File [] filesInDir = file.listFiles();
+				if (filesInDir != null && filesInDir.length > 0) {
+					deleteOldFiles(filesInDir, currentPath + directoryName + File.separator);
 				}
 
-				if (!Files.exists(Path.of(newDir))) {
+				if (!Files.exists(Path.of(pathSourceDir))) {
 					tryDelete(file);
 				}
-				continue;
+			} else {
+				File fileSource = new File(sourcePath + file.getName());
+				if (! (fileSource.exists() && basicFA.size() == fileSource.length())) {
+					tryDelete(file);
+				}
 			}
+		}
+	}
+	private void copyFiles(ArrayList<File> filesArray, String path) throws IOException {
+		for (File file : filesArray) {
+			String pathSourceFile = file.getPath();
+			String pathSyncFile = path + file.getName();
+			Files.copy(Path.of(pathSourceFile), Path.of(pathSyncFile));
 
-			File fileSource = new File(sourcePath + File.separator + file.getName());
-			if (! (fileSource.exists() && basicFA.size() == fileSource.length())) {
-				tryDelete(file);
-			}
+			ServiceLogging.log("Синхронизировано: \"" + pathSyncFile + "\"");
 		}
-	}
-	private void copyFiles(ArrayList<File> files, String path) throws IOException {
-		for (File file : files) {
-			Files.copy(Path.of(file.getPath()), Path.of(path + File.separator + file.getName()));
-
-			ServiceLogging.log("Синхронизировано: \"" + file.getPath() + "\"");
-		}
-	}
-	private String addNameToPath(String path, String name) {
-		if (! path.endsWith(File.separator)) {
-			path += File.separator;
-		}
-		path += name;
-		return path;
-	}
-	private String chetoToPath(String path, String name) {
-		if (path.endsWith(name)) {
-			path = path.substring(0, path.length() - name.length());
-		}
-		return path;
 	}
 	private void tryDelete(File file) {
 		if (file.delete()) {

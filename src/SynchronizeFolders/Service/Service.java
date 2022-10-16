@@ -33,20 +33,13 @@ public class Service {
 		Service.checkFolder(sourceFolder);
 
 		System.out.print("Введите путь к конечной папке:");
-		syncFolder = formatPath(scan.nextLine().replace("\n", ""));
+		syncFolder = scan.nextLine().replace("\n", "");
+		syncFolder = formatPath(syncFolder);
 
 		String sourceFolderName = new File(sourceFolder).getName();
-		String syncFolderName = new File(syncFolder).getName();
+		// String syncFolderName = new File(syncFolder).getName();
 		Service.checkFolder(syncFolder.replace(sourceFolderName, ""));
-		if (!sourceFolderName.equals(syncFolderName)) {
-			if (!syncFolder.endsWith(File.separator)) {
-				syncFolder += File.separator;
-			}
-			syncFolder += sourceFolderName;
-			if (sourceFolder.endsWith(File.separator)) {
-				syncFolder += File.separator;
-			}
-		}
+	
 		Path of = Path.of(syncFolder);
 		if (!Files.exists(of)) {
 			Files.createDirectory(of);
@@ -76,7 +69,7 @@ public class Service {
 	public static String formatPath(String str) {
 		str = str.replace("\"", "");
 		str = str.replace("//", "/");
-		if (! str.endsWith(File.separator)) {
+		if (!str.endsWith(File.separator)) {
 			str += File.separator;
 		}
 		return str;
