@@ -75,12 +75,7 @@ public class ServiceUpdate {
 				File dirSync = new File(newDir);
 
 				if (!dirSync.exists()) {
-					try {
-						Files.createDirectory(Path.of(newDir));
-					} catch (IOException err) {
-						err.printStackTrace();
-						return;
-					}
+					Files.createDirectory(Path.of(newDir));
 					ServiceLogging.log("Создан каталог: \"" + newDir + "\"");
 				}
 
