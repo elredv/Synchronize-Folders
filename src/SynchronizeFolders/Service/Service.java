@@ -30,7 +30,7 @@ public class Service {
 
 		System.out.print("Первый запуск\nВведите путь к источнику синхронизации:");
 		sourcePath = formatPath(scan.nextLine());
-		Service.checkFolder(sourcePath);
+		Service.checkFolderExists(sourcePath);
 
 		System.out.print("Введите путь к конечной папке:");
 		syncToPath = scan.nextLine().replace("\n", "");
@@ -38,7 +38,7 @@ public class Service {
 
 		String sourceFolderName = new File(sourcePath).getName();
 		// String syncFolderName = new File(syncToPath).getName();
-		Service.checkFolder(syncToPath.replace(sourceFolderName, ""));
+		Service.checkFolderExists(syncToPath.replace(sourceFolderName, ""));
 	
 		Path of = Path.of(syncToPath);
 		if (!Files.exists(of)) {
@@ -61,7 +61,7 @@ public class Service {
 
 		Repo.saveConfig();
 	}
-	public static void checkFolder(String str) throws FolderNotFoundException {
+	public static void checkFolderExists(String str) throws FolderNotFoundException {
 		if (!Files.exists(Path.of(str))) {
 			throw new FolderNotFoundException("Папка \"" + str + "\" не существует");
 		}

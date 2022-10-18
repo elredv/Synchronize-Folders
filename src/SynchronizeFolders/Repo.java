@@ -31,7 +31,7 @@ public class Repo {
 	public static void checkParams() throws FolderNotFoundException {
 		for (Map.Entry<String, String> name : map.entrySet()) {
 			 if (name.getKey().endsWith("Folder")) {
-				 Service.checkFolder(name.getValue());
+				 Service.checkFolderExists(name.getValue());
 			 } else if (name.getKey().endsWith("Enable")) {
 				 if (!(name.getValue().equals("true") || name.getValue().equals("false"))) {
 					 Repo.setParam(name.getKey(), "false");
