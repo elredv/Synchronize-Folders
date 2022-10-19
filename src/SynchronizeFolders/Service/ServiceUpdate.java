@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class ServiceUpdate {
 	private String sourcePath = "";
 	private String syncToPath = "";
-	private int timeSleep;
+	private float timeSleep;
 	
 	private HashMap<File, String> pathDifferentFiles = new HashMap<File, String>();
 
@@ -30,11 +30,11 @@ public class ServiceUpdate {
 		syncToPath = str;
 	}
 
-	public int getTimeSleep() {
+	public float getTimeSleep() {
 		return timeSleep;
 	}
-	public void setTimeSleep(int timeSleep) {
-		this.timeSleep = timeSleep * 1000;
+	public void setTimeSleep(float timeSleep) {
+		this.timeSleep = timeSleep;
 	}
 
 	public void run() {
@@ -51,7 +51,7 @@ public class ServiceUpdate {
 					copyNewFiles(filesSource);
 				}
 
-				Thread.sleep(getTimeSleep());
+				Thread.sleep((int) getTimeSleep() * 1000);
 			} catch (InterruptedException | IOException  err) {
 				err.printStackTrace();
 				break;

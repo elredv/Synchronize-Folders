@@ -19,7 +19,7 @@ public class Service {
 		ServiceUpdate serviceUpdate = new ServiceUpdate();
 		serviceUpdate.setSourcePath(Repo.getParam("sourcePath"));
 		serviceUpdate.setSyncToPath(Repo.getParam("syncToPath"));
-		serviceUpdate.setTimeSleep(Integer.parseInt(Repo.getParam("timeSleepInt")));
+		serviceUpdate.setTimeSleep(Float.parseFloat(Repo.getParam("timeSleepInt")));
 		serviceUpdate.run();
 
 		ServiceLogging.log("Программа запущена");
