@@ -1,4 +1,4 @@
-package SynchronizeFolders;
+package SynchronizeFolders.Repo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,12 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import SynchronizeFolders.Exceptions.FolderNotFoundException;
 import SynchronizeFolders.Service.Service;
 import SynchronizeFolders.Service.ServiceLogging;
 
 public class Repo {
-	private Repo(){}
+	private Repo() {}
 
 	static File file = new File("");
 	private static final String configPath = file.getAbsolutePath() + File.separator + "ConfigMySynchronize.cfg";
@@ -22,29 +21,35 @@ public class Repo {
 	public static String getParam(String name) {
 		return map.get(name);
 	}
-	public static void setParam(String name,  String param) {
+
+	public static void setParam(String name, String param) {
 		map.put(name, param);
 	}
-	private static int limitTimeSleep(int i) {
-		return Math.max(Math.min(i, 3600), 1);
-	}
-	public static void checkParams() throws FolderNotFoundException {
-		for (Map.Entry<String, String> name : map.entrySet()) {
-			 if (name.getKey().endsWith("Folder")) {
-				 Service.checkFolderExists(name.getValue());
-			 } else if (name.getKey().endsWith("Enable")) {
-				 if (!(name.getValue().equals("true") || name.getValue().equals("false"))) {
-					 Repo.setParam(name.getKey(), "false");
-				 }
-			 } else if (name.getKey().equals("timeSleep")) {
-				int val = Integer.parseInt(name.getValue());
-				val = limitTimeSleep(val);
 
-				Repo.setParam(name.getKey(), String.valueOf(val));
+	private static int clampParam(String key, int i) {
+		if (key.equals("timeSleepInt")) {
+			return Math.max(Math.min(i, 3600), 1);
+		}
+		return i;
+	}
+
+	public static void checkParams() throws FileNotFoundException {
+		for (Map.Entry<String, String> name : map.entrySet()) {
+			String key = name.getKey();
+			String value = name.getValue();
+
+			if (key.endsWith("Path")) {
+				Service.checkFolderExists(value);
+			} else if (key.endsWith("Int")) {
+				int val = Integer.parseInt(value);
+				val = clampParam(key, val);
+
+				Repo.setParam(key, String.valueOf(val));
 			}
 		}
 	}
-	public static boolean loadConfig() throws FileNotFoundException {
+
+	public static boolean loadConfigFile() throws FileNotFoundException {
 		File file = new File(configPath);
 		if (!file.exists() || file.length() < 5) {
 			return false;
@@ -65,11 +70,14 @@ public class Repo {
 
 		scan.close();
 
+		checkParams();
+
 		ServiceLogging.log("Конфиг загружен, путь: " + configPath);
 
 		return true;
 	}
-	public static void saveConfig() throws IOException {
+
+	public static void saveConfigFile() throws IOException {
 		FileWriter fileWriter = new FileWriter(configPath);
 		for (Map.Entry<String, String> name : map.entrySet()) {
 			fileWriter.append(name.getKey() + "=" + name.getValue() + "\n");
