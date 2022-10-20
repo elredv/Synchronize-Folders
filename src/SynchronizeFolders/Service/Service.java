@@ -16,7 +16,7 @@ public class Service {
 			firstStart();
 		}
 
-		ServiceUpdate serviceUpdate = new ServiceUpdate();
+		ServiceSynchronize serviceUpdate = new ServiceSynchronize();
 		serviceUpdate.setSourcePath(Repo.getParam("sourcePath"));
 		serviceUpdate.setSyncToPath(Repo.getParam("syncToPath"));
 		serviceUpdate.setTimeSleep(Float.parseFloat(Repo.getParam("timeSleepInt")));
