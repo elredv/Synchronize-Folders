@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.Scanner;
 
 import SynchronizeFolders.Repo.Repo;
+import SynchronizeFolders.Repo.RepoObject;
 
 public class Service {
 	public void start() throws Exception {
@@ -17,9 +18,9 @@ public class Service {
 		}
 
 		ServiceSynchronize serviceUpdate = new ServiceSynchronize();
-		serviceUpdate.setSourcePath(Repo.getParam("sourcePath"));
-		serviceUpdate.setSyncToPath(Repo.getParam("syncToPath"));
-		serviceUpdate.setTimeSleep(Float.parseFloat(Repo.getParam("timeSleepInt")));
+		serviceUpdate.setSourcePath((String) Repo.getParam("sourcePath").getValue());
+		serviceUpdate.setSyncToPath((String) Repo.getParam("syncToPath").getValue());
+		serviceUpdate.setTimeSleep((Float) Repo.getParam("timeSleepInt").getValue());
 		serviceUpdate.run();
 
 		ServiceLogging.log("Программа запущена");
@@ -29,7 +30,7 @@ public class Service {
 
 		System.out.print("Первый запуск\nВведите путь к источнику синхронизации:");
 		String sourcePath = formatPath(scan.nextLine());
-		Service.checkFolderExists(sourcePath);
+		checkFolderExists(sourcePath);
 
 		System.out.print("Введите путь к конечной папке:");
 		String syncToPath = scan.nextLine().replace("\n", "");
@@ -39,7 +40,7 @@ public class Service {
 		if (syncToPath.endsWith(sourceFolderName)) {
 			syncToPath.substring(0, syncToPath.length() - sourceFolderName.length());
 		}
-		Service.checkFolderExists(syncToPath);
+		checkFolderExists(syncToPath);
 
 		if (sourcePath.equalsIgnoreCase(syncToPath)) {
 			scan.close();
@@ -51,9 +52,12 @@ public class Service {
 
 		scan.close();
 
-		Repo.setParam("sourcePath", sourcePath);
-		Repo.setParam("syncToPath", syncToPath);
-		Repo.setParam("timeSleepInt", String.valueOf(timeSleep));
+		RepoObject<String> sourcePathObject = new RepoObject<>(sourcePath);
+		RepoObject<String> syncToPathObject = new RepoObject<>(syncToPath);
+		RepoObject<Float> timeSleepObject = new RepoObject<>(Float.valueOf(timeSleep));
+		Repo.setParam("sourcePath", sourcePathObject);
+		Repo.setParam("syncToPath", syncToPathObject);
+		Repo.setParam("timeSleepInt", timeSleepObject);
 
 		Repo.saveConfigFile();
 	}
