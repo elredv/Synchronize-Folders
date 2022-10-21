@@ -10,17 +10,21 @@ import SynchronizeFolders.Repo.Repo;
 import SynchronizeFolders.Repo.RepoObject;
 
 public class Service {
+	Repo repo;
+
 	public void start() throws Exception {
+		repo = new Repo();
+
 		System.out.println("!!!!!ВНИМАНИЕ!!!!! В папке, в которую синхронизируются данные, все \"лишние\" данные будут удалены.");
 
-		if (!Repo.loadConfigFile()) {
+		if (!repo.loadConfigFile()) {
 			firstStart();
 		}
 
 		ServiceSynchronize serviceUpdate = new ServiceSynchronize();
-		serviceUpdate.setSourcePath((String) Repo.getParam("sourcePath").getValue());
-		serviceUpdate.setSyncToPath((String) Repo.getParam("syncToPath").getValue());
-		serviceUpdate.setTimeSleep((Float) Repo.getParam("timeSleepInt").getValue());
+		serviceUpdate.setSourcePath((String) repo.getParam("sourcePath").getValue());
+		serviceUpdate.setSyncToPath((String) repo.getParam("syncToPath").getValue());
+		serviceUpdate.setTimeSleep((Float) repo.getParam("timeSleepInt").getValue());
 		serviceUpdate.run();
 
 		ServiceLogging.log("Программа запущена");
@@ -55,11 +59,11 @@ public class Service {
 		RepoObject<String> sourcePathObject = new RepoObject<>(sourcePath);
 		RepoObject<String> syncToPathObject = new RepoObject<>(syncToPath);
 		RepoObject<Float> timeSleepObject = new RepoObject<>(Float.valueOf(timeSleep));
-		Repo.setParam("sourcePath", sourcePathObject);
-		Repo.setParam("syncToPath", syncToPathObject);
-		Repo.setParam("timeSleepInt", timeSleepObject);
+		repo.setParam("sourcePath", sourcePathObject);
+		repo.setParam("syncToPath", syncToPathObject);
+		repo.setParam("timeSleepInt", timeSleepObject);
 
-		Repo.saveConfigFile();
+		repo.saveConfigFile();
 	}
 	public static void checkFolderExists(String str) throws FileNotFoundException {
 		if (!Files.exists(Path.of(str))) {
