@@ -1,4 +1,4 @@
-package SynchronizeFolders.Service;
+package SynchronizeFolders.Service.Tests;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ServiceSynchronizeTest {
+import SynchronizeFolders.Service.ServiceSynchronize;
+
+public class ServiceSynchronizeTests {
 	private String pathForTests = "T:" + File.separator + "yyyyyyyServiceSynchronizeTest" + File.separator;
 	private String sourcePath = pathForTests + "CopyFrom" + File.separator;
 	private String syncToPath = pathForTests + "CopyTo" + File.separator;
