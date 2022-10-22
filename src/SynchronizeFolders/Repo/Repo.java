@@ -23,6 +23,13 @@ public class Repo {
 		configName = name;
 		configPath = absolutePath + File.separator + configName;
 	}
+	
+	public Repo() {}
+
+	public Repo(String configName) {
+		setConfigName(configName);
+	}
+
 
 	public String getConfigPath() {
 		return configPath;
