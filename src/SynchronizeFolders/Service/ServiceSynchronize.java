@@ -97,7 +97,7 @@ public class ServiceSynchronize {
 		}
 	}
 
-	protected ArrayList<File> getDifferentFiles(File [] listFiles, String comparePath, String currentPath) throws IOException, InterruptedException {
+	public ArrayList<File> getDifferentFiles(File [] listFiles, String comparePath, String currentPath) throws IOException, InterruptedException {
 		ArrayList<File> differentFiles = new ArrayList<>();
 		String checkPath = comparePath + currentPath;
 
