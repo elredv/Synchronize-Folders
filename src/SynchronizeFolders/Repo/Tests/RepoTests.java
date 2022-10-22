@@ -12,12 +12,12 @@ public class RepoTests {
 	private String configName = "TestWorkRepo.bin";
 
 	// vars for tests
-	String varString1 = "heLLow";
-	String varString2 = "hellow2";
-	Integer varInteger1 = 4;
-	Integer varInteger2 = 60;
-	Float varFloat1 = 0.35f;
-	Float varFloat2 = 1.55f;
+	private String varString1 = "heLLow";
+	private String varString2 = "hellow2";
+	private Integer varInteger1 = 4;
+	private Integer varInteger2 = 60;
+	private Float varFloat1 = 0.35f;
+	private Float varFloat2 = 1.55f;
 
 	private void deleteTestConfigFile(Repo repo) {
 		File config = new File(repo.getConfigPath());
