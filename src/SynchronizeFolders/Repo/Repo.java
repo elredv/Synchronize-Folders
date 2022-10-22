@@ -15,7 +15,9 @@ public class Repo {
 	private String configName = "ConfigMySynchronize.bin";
 	private String configPath = absolutePath + File.separator + configName;
 
-	private HashMap<String, RepoObject<?>> hashMap = new HashMap<String, RepoObject<?>>();
+	private HashMap<String, String> hashMapString = new HashMap<>();
+	private HashMap<String, Integer> hashMapInteger = new HashMap<>();
+	private HashMap<String, Float> hashMapFloat = new HashMap<>();
 
 	public void setConfigName(String name) {
 		configName = name;
@@ -26,13 +28,26 @@ public class Repo {
 		return configPath;
 	}
 
-	public RepoObject<?> getParam(String name) {
-		return hashMap.get(name);
+	public String getString(String key) {
+		return hashMapString.get(key);
+	}
+	public Integer getInteger(String key) {
+		return hashMapInteger.get(key);
+	}
+	public Float getFloat(String key) {
+		return hashMapFloat.get(key);
 	}
 
-	public void setParam(String name, RepoObject<?> param) {
-		hashMap.put(name, param);
+	public void setString(String key, String value) {
+		hashMapString.put(key, value);
 	}
+	public void setInteger(String key, Integer value) {
+		hashMapInteger.put(key, value);
+	}
+	public void setFloat(String key, Float value) {
+		hashMapFloat.put(key, value);
+	}
+
 
 	public boolean loadConfigFile() {
 		File config = new File(configPath);
@@ -45,8 +60,15 @@ public class Repo {
 			ObjectInput ois = new ObjectInputStream(fis);
 	 
 			@SuppressWarnings("unchecked")
-			HashMap<String, RepoObject<?>> loadedMap = (HashMap<String, RepoObject<?>>) ois.readObject();
-			hashMap = loadedMap;
+			HashMap<String, String> loadedHashMapString = (HashMap<String, String>) ois.readObject();
+			@SuppressWarnings("unchecked")
+			HashMap<String, Integer> loadedHashMapInteger = (HashMap<String, Integer>) ois.readObject();
+			@SuppressWarnings("unchecked")
+			HashMap<String, Float> loadedHashMapFloat = (HashMap<String, Float>) ois.readObject();
+
+			hashMapString = loadedHashMapString;
+			hashMapInteger = loadedHashMapInteger;
+			hashMapFloat = loadedHashMapFloat;
 	
 			fis.close();
 			ois.close();
@@ -64,7 +86,9 @@ public class Repo {
 		try {
 			FileOutputStream fis = new FileOutputStream(configPath);
 			ObjectOutputStream ois = new ObjectOutputStream(fis);
-			ois.writeObject(hashMap);
+			ois.writeObject(hashMapString);
+			ois.writeObject(hashMapInteger);
+			ois.writeObject(hashMapFloat);
 			fis.close();
 			ois.close();
 		} catch (Exception e) {

@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.util.Scanner;
 
 import SynchronizeFolders.Repo.Repo;
-import SynchronizeFolders.Repo.RepoObject;
 
 public class Service {
 	Repo repo;
@@ -22,9 +21,9 @@ public class Service {
 		}
 
 		ServiceSynchronize serviceUpdate = new ServiceSynchronize();
-		serviceUpdate.setSourcePath((String) repo.getParam("sourcePath").getValue());
-		serviceUpdate.setSyncToPath((String) repo.getParam("syncToPath").getValue());
-		serviceUpdate.setTimeSleep((Float) repo.getParam("timeSleepInt").getValue());
+		serviceUpdate.setSourcePath(repo.getString("sourcePath"));
+		serviceUpdate.setSyncToPath(repo.getString("syncToPath"));
+		serviceUpdate.setTimeSleep(repo.getFloat("timeSleep"));
 		serviceUpdate.run();
 
 		ServiceLogging.log("Программа запущена");
@@ -52,16 +51,13 @@ public class Service {
 		}
 
 		System.out.print("Введите время между синхронизацией(1 - 3600 секунд):");
-		int timeSleep = scan.nextInt();
+		float timeSleep = scan.nextFloat();
 
 		scan.close();
 
-		RepoObject<String> sourcePathObject = new RepoObject<>(sourcePath);
-		RepoObject<String> syncToPathObject = new RepoObject<>(syncToPath);
-		RepoObject<Float> timeSleepObject = new RepoObject<>(Float.valueOf(timeSleep));
-		repo.setParam("sourcePath", sourcePathObject);
-		repo.setParam("syncToPath", syncToPathObject);
-		repo.setParam("timeSleepInt", timeSleepObject);
+		repo.setString("sourcePath", sourcePath);
+		repo.setString("syncToPath", syncToPath);
+		repo.setFloat("timeSleep", timeSleep);
 
 		repo.saveConfigFile();
 	}
