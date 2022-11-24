@@ -9,15 +9,15 @@ import SynchronizeFolders.Repo.Repo;
 
 
 public class RepoTests {
-	private String configName = "TestWorkRepo.bin";
+	private static final String configName = "TestWorkRepo.bin";
 
 	// vars for tests
-	private String varString1 = "heLLow";
-	private String varString2 = "hellow2";
-	private Integer varInteger1 = 4;
-	private Integer varInteger2 = 60;
-	private Float varFloat1 = 0.35f;
-	private Float varFloat2 = 1.55f;
+	private static final String varString1 = "heLLow";
+	private static final String varString2 = "hellow2";
+	private static final Integer varInteger1 = 4;
+	private static final Integer varInteger2 = 60;
+	private static final Float varFloat1 = 0.35f;
+	private static final Float varFloat2 = 1.55f;
 
 	private void deleteTestConfigFile(Repo repo) {
 		File config = new File(repo.getConfigPath());

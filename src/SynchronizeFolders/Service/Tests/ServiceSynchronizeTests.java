@@ -15,18 +15,18 @@ import org.junit.Test;
 import SynchronizeFolders.Service.ServiceSynchronize;
 
 public class ServiceSynchronizeTests {
-	private String pathForTests = "T:" + File.separator + "yyyyyyyServiceSynchronizeTest" + File.separator;
-	private String sourcePath = pathForTests + "CopyFrom" + File.separator;
-	private String syncToPath = pathForTests + "CopyTo" + File.separator;
+	private static final String pathForTests = "C:" + File.separator + "yyyyyyyServiceSynchronizeTest" + File.separator;
+	private static final String sourcePath = pathForTests + "CopyFrom" + File.separator;
+	private static final String syncToPath = pathForTests + "CopyTo" + File.separator;
 	
-	private String nameSubDirectory = "CopyDirectory";
-	private String nameFileInSubDirectory = "NeedCopy.txt";
+	private static final String nameSubDirectory = "CopyDirectory";
+	private static final String nameFileInSubDirectory = "NeedCopy.txt";
 
-	private String pathSubDirectoryForCopy = sourcePath + nameSubDirectory + File.separator;
-	private String pathSubDirectoryAfterCopy = syncToPath + nameSubDirectory + File.separator;
+	private static final String pathSubDirectoryForCopy = sourcePath + nameSubDirectory + File.separator;
+	private static final String pathSubDirectoryAfterCopy = syncToPath + nameSubDirectory + File.separator;
 
-	private String pathFileForCopy = pathSubDirectoryForCopy + nameFileInSubDirectory;
-	private String pathFileAfterCopy = pathSubDirectoryAfterCopy + nameFileInSubDirectory;
+	private static final String pathFileForCopy = pathSubDirectoryForCopy + nameFileInSubDirectory;
+	private static final String pathFileAfterCopy = pathSubDirectoryAfterCopy + nameFileInSubDirectory;
 
 	private void createTestEnvironment() throws IOException {
 		deleteTestEnvironment();
